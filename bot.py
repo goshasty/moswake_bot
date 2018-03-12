@@ -4,7 +4,7 @@ from telebot import types
 
 from const import *
 
-bot = telebot.TeleBot(config.token)
+bot = telebot.TeleBot(config.token_dimas)
 live = 0
 
 
@@ -24,29 +24,29 @@ class Person:
     bot.send_message(message.chat.id, "Phone: " + self.phone)
 
 
-def show_buttons(message):
-    keyboard = types.InlineKeyboardMarkup(row_width = 1)
-    callback_button_1 = types.InlineKeyboardButton(text = "wakeboard",
-                      callback_data = "wakeboard")
-    callback_button_2 = types.InlineKeyboardButton(text = "flyboard",
-                      callback_data = "flyboard")
-    callback_button_3 = types.InlineKeyboardButton(text = "winch",
-                      callback_data = "winch")
-    keyboard.add(callback_button_1,callback_button_2,callback_button_3)
-    bot.send_message(message.chat.id,INVITE_CATEGORY,reply_markup = keyboard)
-  
-
-def make_keyboard(list):
+def make_keyboard(list,width):
     """
     Show a grid of buttons, which associated with elements of list
     """
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3,
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=width,
                                         one_time_keyboard=True)
     keyboard.add(*[types.KeyboardButton(n) for n in list])
     return keyboard
 
+def show_buttons(message):
+    keyboard = make_keyboard(categories,1)
+    bot.send_message(message.chat.id,INVITE_CATEGORY,reply_markup = keyboard)
+ 
+def check_categories(text):
+    n = 0
+    for i in categories:
+        if(i == text):
+            return n+1
+        n = n+1 
+    return 0
 
 def check_days(text):
+    
     for i in days:
         if(i == text):
             return 1
@@ -59,15 +59,30 @@ def check_time(text):
     return 0
 
 def check_phone(text):
+    global p
     n = 0
     for i in text:
-        if ((i < '0') or (i > '9')):
+        if (((i < '0') or (i > '9')) and (n > 0)):
             return 0
         n = n+1
-    if (n == 10):
+    if (n == 11 and (text[0] == '7' or text[0] == '8')):
+        phone = "+7" + text[1:11]
+        p.setPhone(phone)
+        return 1
+    elif (n == 10):
+        phone = "+7" + text
+        p.setPhone(phone)
+        return 1
+    elif((text[0] == '+') and (text[1] == '7') and (n == 12)):
+        p.setPhone(text)
         return 1
     else:
         return 0
+
+def check_cancel(text):
+    if(text == "/cancel"):
+      return 1
+    return 0
 
 @bot.message_handler(commands = ['start'])
 def start(message):
@@ -76,9 +91,27 @@ def start(message):
     """ 
     show_buttons(message)
 
-
-
 @bot.message_handler(content_types=["text"])
+def choose_button(message):
+    global p
+    global live
+    if(check_cancel(message.text) == 1):
+         show_buttons(message)
+         return
+    categoriesID = check_categories(message.text)
+    if(categoriesID != 0):
+        p = Person(categories[categoriesID-1])
+        live = 1
+        keyboard = make_keyboard(days,3)
+        bot.send_message(message.chat.id,ASK_DAY,reply_markup=keyboard)
+        bot.register_next_step_handler(message,ask_day)
+    else:
+        keyboard = make_keyboard(categories,1)
+        bot.send_message(message.chat.id,ASK_CATEGORY_AGAIN,
+                         reply_markup=keyboard)
+        bot.register_next_step_handler(message,choose_button)
+
+
 def ask_day(message):
     """
     Check if the day in right format
@@ -87,15 +120,20 @@ def ask_day(message):
 
     global live
     global p
+    if(check_cancel(message.text) == 1):
+         show_buttons(message)
+         return
     if live == 1:
         dayID = check_days(message.text)
         if(dayID != 0):
             p.setDay(message.text)
-            keyboard=make_keyboard(times)
+            keyboard=make_keyboard(times,3)
             bot.send_message(message.chat.id,ASK_TIME,reply_markup=keyboard)
             bot.register_next_step_handler(message,ask_time)
         else:
-            bot.send_message(message.chat.id,ASK_DAY_AGAIN)
+            keyboard = make_keyboard(days,3)
+            bot.send_message(message.chat.id,ASK_DAY_AGAIN,
+                             reply_markup=keyboard)
             bot.register_next_step_handler(message,ask_day)
     else:
         bot.send_message(message.chat.id,"lol")
@@ -103,6 +141,9 @@ def ask_day(message):
 def ask_time(message):
     global live
     global p
+    if(check_cancel(message.text) == 1):
+         show_buttons(message)
+         return
     if live == 1:
         timeID = check_time(message.text)
         if (timeID != 0):
@@ -110,7 +151,9 @@ def ask_time(message):
             bot.send_message(message.chat.id,ASK_PHONE)
             bot.register_next_step_handler(message,ask_phone)
         else:
-            bot.send_message(message.chat.id,ASK_TIME_AGAIN)
+            keyboard = make_keyboard(times,3);
+            bot.send_message(message.chat.id,ASK_TIME_AGAIN,
+                             reply_markup=keyboard)
             bot.register_next_step_handler(message,ask_time)
     else:
         bot.send_message(message.chat.id,"lol")
@@ -118,10 +161,12 @@ def ask_time(message):
 def ask_phone(message):
     global live
     global p
+    if(check_cancel(message.text) == 1):
+         show_buttons(message)
+         return
     if live == 1:
         phoneID = check_phone(message.text)
         if (phoneID != 0):
-             p.setPhone(message.text)
              p.printInformation(message)
              del p
              live = 0
@@ -131,21 +176,6 @@ def ask_phone(message):
             bot.register_next_step_handler(message,ask_phone)
     else:
         bot.send_message(message.chat.id, "lol")  
-
-
-@bot.callback_query_handler(func=lambda call: True)
-def callback_inline(call):
-    global p
-    global live
-    if call.data == "wakeboard":
-        p = Person("wakeboard")
-    if call.data == "flyboard":
-        p = Person("flyboard")
-    if call.data == "winch":
-        p = Person("winch")
-    live = 1
-    keyboard = make_keyboard(days)
-    bot.send_message(call.message.chat.id,ASK_DAY,reply_markup=keyboard)
 
 
 

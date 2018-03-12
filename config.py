@@ -1,1 +1,4 @@
 token = '550472284:AAFxEA5025qzlC085oGW2KIzgasjwiBAF70'
+
+token_dimas = '454657289:AAFWP1fk5ReUAeAqtEfjcNIo02V0f4ofsEA'
+
