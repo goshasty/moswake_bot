@@ -18,10 +18,10 @@ class Person:
   def setPhone(self,phone):
     self.phone = phone
   def printInformation(self,message):
-    bot.send_message(message.chat.id, "You powered " + self.button)
-    bot.send_message(message.chat.id, "Day: " + self.day)
-    bot.send_message(message.chat.id, "Time: " + self.time)
-    bot.send_message(message.chat.id, "Phone: " + self.phone)
+    bot.send_message(message.chat.id,  BUTTON_POWERED + self.button)
+    bot.send_message(message.chat.id,  DAY_CHOSE + self.day)
+    bot.send_message(message.chat.id,  TIME_CHOSE + self.time)
+    bot.send_message(message.chat.id,  PHONE_CHOSE + self.phone)
 
 
 def make_keyboard(list,width):
@@ -36,6 +36,21 @@ def make_keyboard(list,width):
 def show_buttons(message):
     keyboard = make_keyboard(categories,1)
     bot.send_message(message.chat.id,INVITE_CATEGORY,reply_markup = keyboard)
+
+def send_photos(message,ID):
+    if (ID == 1):
+        bot.send_photo(message.chat.id,open('media/wakeboard1.jpg','rb'))
+        bot.send_photo(message.chat.id,open('media/wakeboard2.jpg','rb'))
+        bot.send_photo(message.chat.id,open('media/wakeboard3.jpg','rb'))
+    elif (ID == 2):
+        bot.send_photo(message.chat.id,open('media/flyboard1.jpg','rb'))
+        bot.send_photo(message.chat.id,open('media/flyboard2.jpg','rb'))
+        bot.send_photo(message.chat.id,open('media/flyboard3.jpg','rb'))
+    else:
+        bot.send_photo(message.chat.id,open('media/winch1.jpg','rb'))
+        bot.send_photo(message.chat.id,open('media/winch2.jpg','rb'))
+        bot.send_photo(message.chat.id,open('media/winch3.jpg','rb'))
+
  
 def check_categories(text):
     n = 0
@@ -102,6 +117,7 @@ def choose_button(message):
     if(categoriesID != 0):
         p = Person(categories[categoriesID-1])
         live = 1
+        send_photos(message,categoriesID)
         keyboard = make_keyboard(days,3)
         bot.send_message(message.chat.id,ASK_DAY,reply_markup=keyboard)
         bot.register_next_step_handler(message,ask_day)

@@ -1,0 +1,96 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-15 00:09+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: const.py:8
+msgid "Monday"
+msgstr ""
+
+#: const.py:8
+msgid "Tuesday"
+msgstr ""
+
+#: const.py:8
+msgid "Wednesday"
+msgstr ""
+
+#: const.py:8
+msgid "Thursday"
+msgstr ""
+
+#: const.py:8
+msgid "Friday"
+msgstr ""
+
+#: const.py:9
+msgid "Saturday"
+msgstr ""
+
+#: const.py:9
+msgid "Sunday"
+msgstr ""
+
+#: const.py:13
+msgid "You powered: "
+msgstr ""
+
+#: const.py:14
+msgid "Day: "
+msgstr ""
+
+#: const.py:15
+msgid "Time: "
+msgstr ""
+
+#: const.py:16
+msgid "Phone: "
+msgstr ""
+
+#: const.py:17
+msgid "Choose the day of the week"
+msgstr ""
+
+#: const.py:18
+msgid "Choose the time"
+msgstr ""
+
+#: const.py:19
+msgid "Write your phone number where stars +7**********"
+msgstr ""
+
+#: const.py:20
+msgid ""
+"Wrong day. Please, try again\n"
+"Press /cancel to abort feeling form "
+msgstr ""
+
+#: const.py:22
+msgid ""
+"Wrong time. Please, try again\n"
+"Press /cancel to abort feeling form "
+msgstr ""
+
+#: const.py:24
+msgid ""
+"Wrong phone. Please, try again\n"
+"Press /cancel to abort feeling form "
+msgstr ""
+
+#: const.py:26
+msgid "Wrong button. Please, try again"
+msgstr ""
